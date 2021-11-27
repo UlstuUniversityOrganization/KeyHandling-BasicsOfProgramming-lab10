@@ -1,7 +1,11 @@
 #pragma once
 #include <Windows.h>
-#include "mymath.h"
-enum class MoveDirection
+#include "block.h"
+#include <vector>
+#include "MapManager.h"
+
+#define Move
+enum MoveDirection
 {
 	Up = 0,
 	Right = 1,
@@ -12,12 +16,16 @@ enum class MoveDirection
 class Entity
 {
 public:
+	int teamID = 0;
 	float2 pos;
 	float2 size;
-	COLORREF color;
-	int** map;
-	virtual void MoveTo(MoveDirection dir);
-	virtual void Update() = 0;
-	virtual void Draw(HDC hdc, float2 origin) = 0;
+	float3 color;
+	float2 origin;
+	MapManager* mapManager;
+	Entity(float3 color, MapManager* mapManager, float2 pos, float2 size);
+	static Entity* GetEntity(int id, MapManager* mapManager, float2 pos, float2 size);
+	virtual bool MoveTo(int dir);
+	virtual void Update();
+	virtual void Draw(HDC hdc);
 };
 

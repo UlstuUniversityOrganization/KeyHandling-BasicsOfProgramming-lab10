@@ -141,20 +141,32 @@
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlockEmpty.h" />
+    <ClInclude Include="BlockFinish.h" />
+    <ClInclude Include="BlockWall.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityCreepDire.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="KeyHandling-BasicsOfProgramming-lab10.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MapManager.h" />
     <ClInclude Include="mymath.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SpikesBlock.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockEmpty.cpp" />
+    <ClCompile Include="BlockFinish.cpp" />
+    <ClCompile Include="BlockWall.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityCreepDire.cpp" />
     <ClCompile Include="KeyHandling-BasicsOfProgramming-lab10.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapManager.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SpikesBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KeyHandling-BasicsOfProgramming-lab10.rc" />

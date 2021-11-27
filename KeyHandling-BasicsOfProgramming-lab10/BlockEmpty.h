@@ -3,7 +3,7 @@
 class BlockEmpty : public Block
 {
 public:
-	BlockEmpty();
+	BlockEmpty(float2 origin, float2 pos, float2 size);
 	virtual void Update() override;
 };
 

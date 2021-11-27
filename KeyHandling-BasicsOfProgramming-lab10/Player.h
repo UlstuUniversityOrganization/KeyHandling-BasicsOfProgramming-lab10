@@ -4,9 +4,13 @@
 class Player : public Entity
 {
 public:
-	Player();
-	//virtual void MoveTo(MoveDirection dir, int** map) override;
+	int health = 6;
+	bool immortality = false;
+	int immortaltyTimer = 0;
+	int immortaltyTime = 3;
+	float3 colorAlive;
+	float3 colorImmortal;
+	Player(MapManager* mapManager, float2 pos, float2 size);
 	virtual void Update() override;
-	virtual void Draw(HDC hdc, float2 origin) override;
 };
 

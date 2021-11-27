@@ -1,8 +1,14 @@
 ﻿#include "framework.h"
 #include "KeyHandling-BasicsOfProgramming-lab10.h"
 #include "stdio.h"
-#include "Player.h"
 #include <vector>
+#include "MapManager.h"
+#include "Player.h"
+#include "Block.h"
+#include "BlockEmpty.h"
+#include "BlockWall.h"
+#include "SpikesBlock.h"
+#include "EntityCreepDire.h"
 #define MAX_LOADSTRING 100
 
 // Глобальные переменные:
@@ -128,34 +134,59 @@ float2 DrawTwoDimensionalArray(HDC hdc, int** array, int xElementsCount, int yEl
             HBRUSH brush = CreateSolidBrush(RGB(array[x][y] * 255, array[x][y] * 255, array[x][y] * 255));
             SelectObject(hdc, brush);
             Rectangle(hdc, left + rectangleWidth * x, top + rectangleHeight * y, left + rectangleWidth * (1 + x), top + rectangleHeight * (1 + y));
-
         }
     }
     float2 size = { rectangleWidth, rectangleHeight };
     return size;
 }
 
-int** map;
-int xCount = -1;
-int yCount = -1;
-float2 mapOrigin = {0, 0};
-std::vector<Entity*> entities;
-Player* player;
+Block* GetBlock(int id, float2 origin, float2 pos, float2 size)
+{
+    Block* block = nullptr;
+    switch (id)
+    {
+    case 0:
+    {
+        block = new BlockEmpty(origin, pos, size);
+        break;
+    }
+    case 1:
+    {
+        block = new BlockWall(origin, pos, size);
+        break;
+    }
+    case 2:
+    {
+        block = new SpikesBlock(origin, pos, size);
+        break;
+    }
+    }
+    return block;
+}
+
+MapManager mapManager(float2{ 0, 0 }, float2{ 50, 50 });
+
+void Update()
+{
+    for (int x = 0; x < mapManager.map.xCount; x++)
+        for (int y = 0; y < mapManager.map.yCount; y++)
+            mapManager.map.blocks[x][y]->Update();
+
+    for (int i = 0; i < mapManager.map.entities.size(); i++)
+        mapManager.map.entities[i]->Update();
+}
+
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
     switch (message)
     {
     case WM_CREATE:
     {
         SetTimer(hWnd, 0, 100, (TIMERPROC) NULL);
-
-        map = LoadTwoDimensionalArray("data.txt", &xCount, &yCount);
-
-        player = new Player();
-        player->color = RGB(100, 100, 255);
-        player->map = map;
-        entities.push_back((Entity*)player);
+        mapManager.activeMap = 0;
+        mapManager.map.Load(mapManager.mapPaths[mapManager.activeMap]);
 
     }
     case WM_TIMER:
@@ -164,6 +195,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 case 0:
                 {
+                    Update();
                     InvalidateRect(hWnd, NULL, TRUE);
                     break;
                 }
@@ -172,7 +204,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
-            // Разобрать выбор в меню:
             switch (wmId)
             {
             case IDM_ABOUT:
@@ -193,26 +224,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             case VK_UP:
             {
-                InvalidateRect(hWnd, NULL, TRUE);
-                player->MoveTo(MoveDirection::Up);
+                if (mapManager.map.player)
+                {
+                    mapManager.map.player->MoveTo(MoveDirection::Up);
+                    InvalidateRect(hWnd, NULL, TRUE);
+                }
                 break;
             }
             case VK_RIGHT:
             {
-                InvalidateRect(hWnd, NULL, TRUE);
-                player->MoveTo(MoveDirection::Right);
+                if (mapManager.map.player)
+                {
+                    mapManager.map.player->MoveTo(MoveDirection::Right);
+                    InvalidateRect(hWnd, NULL, TRUE);
+                }
                 break;
             }
             case VK_DOWN:
             {
-                InvalidateRect(hWnd, NULL, TRUE);
-                player->MoveTo(MoveDirection::Down);
+                if (mapManager.map.player)
+                {
+                    mapManager.map.player->MoveTo(MoveDirection::Down);
+                    InvalidateRect(hWnd, NULL, TRUE);
+                }
                 break;
             }
             case VK_LEFT:
             {
-                InvalidateRect(hWnd, NULL, TRUE);
-                player->MoveTo(MoveDirection::Left);
+                if (mapManager.map.player)
+                {
+                    mapManager.map.player->MoveTo(MoveDirection::Left);
+                    InvalidateRect(hWnd, NULL, TRUE);
+                }
                 break;
             }
         }
@@ -221,20 +264,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            float2 rectangleSize = DrawTwoDimensionalArray(hdc, map, xCount, yCount, mapOrigin.x, mapOrigin.y, mapOrigin.x + 500, mapOrigin.y + 500);\
+            for(int x = 0; x < mapManager.map.xCount; x++)
+                for (int y = 0; y < mapManager.map.yCount; y++)
+                    if (mapManager.map.blocks[x][y])
+                    {
+                        mapManager.map.blocks[x][y]->origin = mapManager.map.origin;
+                        mapManager.map.blocks[x][y]->Draw(hdc);
+                    }
 
-            for (int i = 0; i < entities.size(); i++)
+            for (int i = 0; i < mapManager.map.entities.size(); i++)
             {
-                entities[i]->size = rectangleSize;
-                entities[i]->Update();
-                entities[i]->Draw(hdc, mapOrigin);
+                mapManager.map.entities[i]->size = mapManager.map.blockSize;
+                mapManager.map.entities[i]->Draw(hdc);
             }
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
+    {
         PostQuitMessage(0);
         break;
+    }    
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
