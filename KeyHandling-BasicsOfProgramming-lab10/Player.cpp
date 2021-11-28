@@ -29,8 +29,20 @@ void Player::Update()
 
 	if (health <= 0)
 	{
-		mapManager->activeMap = 0;
-		mapManager->map.Load(mapManager->mapPaths[mapManager->activeMap]);
+		mapManager->isDrawing = false;
+		if (gameOverScreenTimer <= gameOverScreenTime)
+		{
+			mapManager->isDrawingGameOverScreen = true;
+			gameOverScreenTimer++;
+		}
+		else
+		{
+			gameOverScreenTimer = 0;
+			mapManager->isDrawingGameOverScreen = false;
+			mapManager->isDrawing = true;
+			mapManager->activeMap = 0;
+			mapManager->map.Load(mapManager->mapPaths[mapManager->activeMap]);
+		}
 	}
 	if (health > 0)
 	{

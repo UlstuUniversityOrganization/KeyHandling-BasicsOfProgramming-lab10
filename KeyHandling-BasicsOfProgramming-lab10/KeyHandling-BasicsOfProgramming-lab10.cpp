@@ -176,6 +176,7 @@ void Update()
         mapManager.map.entities[i]->Update();
 }
 
+int gameOverTimer = 0;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -187,6 +188,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         SetTimer(hWnd, 0, 100, (TIMERPROC) NULL);
         mapManager.activeMap = 0;
         mapManager.map.Load(mapManager.mapPaths[mapManager.activeMap]);
+
+
 
     }
     case WM_TIMER:
@@ -264,19 +267,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            for(int x = 0; x < mapManager.map.xCount; x++)
-                for (int y = 0; y < mapManager.map.yCount; y++)
-                    if (mapManager.map.blocks[x][y])
-                    {
-                        mapManager.map.blocks[x][y]->origin = mapManager.map.origin;
-                        mapManager.map.blocks[x][y]->Draw(hdc);
-                    }
-
-            for (int i = 0; i < mapManager.map.entities.size(); i++)
+            if (mapManager.isDrawing == true)
             {
-                mapManager.map.entities[i]->size = mapManager.map.blockSize;
-                mapManager.map.entities[i]->Draw(hdc);
+                for (int x = 0; x < mapManager.map.xCount; x++)
+                    for (int y = 0; y < mapManager.map.yCount; y++)
+                        if (mapManager.map.blocks[x][y])
+                        {
+                            mapManager.map.blocks[x][y]->origin = mapManager.map.origin;
+                            mapManager.map.blocks[x][y]->Draw(hdc);
+                        }
+
+                for (int i = 0; i < mapManager.map.entities.size(); i++)
+                {
+                    mapManager.map.entities[i]->size = mapManager.map.blockSize;
+                    mapManager.map.entities[i]->Draw(hdc);
+                }
             }
+            mapManager.SetGameOverScreen(hdc, hWnd);
+
             EndPaint(hWnd, &ps);
         }
         break;
