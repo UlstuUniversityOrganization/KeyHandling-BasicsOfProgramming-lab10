@@ -176,7 +176,6 @@ void Update()
         mapManager.map.entities[i]->Update();
 }
 
-int gameOverTimer = 0;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

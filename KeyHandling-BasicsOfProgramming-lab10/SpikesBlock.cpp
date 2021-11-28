@@ -34,7 +34,6 @@ void SpikesBlock::Draw(HDC hdc)
 			{
 				Ellipse(hdc, pos.x + x * spikeSizeX, pos.y + y * spikeSizeY, pos.x + spikeSizeX + spikeSizeX * x, pos.y + spikeSizeY + spikeSizeY * y);
 			}
-
 	}
 	else
 	{

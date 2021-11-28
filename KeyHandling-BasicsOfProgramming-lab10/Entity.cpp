@@ -94,21 +94,6 @@ void Entity::Update()
     int posX = (pos.x - mapManager->map.origin.x) / size.x;
     int posY = (pos.y  - mapManager->map.origin.y) / size.y;
 
-    if (dynamic_cast<BlockFinish*>(mapManager->map.blocks[posX][posY]))
-        int point = 0;
-
-    //Entity* e = this;
-
-    //Entity*& a = e;
-    //Entity** b = &e;
-
-    int a = 5;
-
-    int* b = &a;
-    int& c = a;
-
-    // |address|->|num|
-
     if (myClamp(0, mapManager->map.xCount - 1, posX) && myClamp(0, mapManager->map.yCount - 1, posY))
         if (mapManager->map.blocks[posX][posY])
             mapManager->map.blocks[posX][posY]->OnEntityCollision(this);

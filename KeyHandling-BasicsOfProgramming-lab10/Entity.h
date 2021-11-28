@@ -4,7 +4,6 @@
 #include <vector>
 #include "MapManager.h"
 
-#define Move
 enum MoveDirection
 {
 	Up = 0,

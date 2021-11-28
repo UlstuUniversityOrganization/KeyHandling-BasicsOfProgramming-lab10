@@ -94,5 +94,4 @@ void Map::Load(const char* filePath)
         if (player)
             break;
     }
-
 }
